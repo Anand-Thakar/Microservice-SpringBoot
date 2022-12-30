@@ -8,6 +8,7 @@ import feign.codec.ErrorDecoder;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Log4j2
 public class CustomErrorDecoder implements ErrorDecoder {
@@ -21,6 +22,7 @@ public class CustomErrorDecoder implements ErrorDecoder {
         log.info("::{}", response.request().headers());
 
         try {
+
             ErrorResponse errorResponse = objectMapper.readValue(response.body().asInputStream(),
                     ErrorResponse.class);
 
