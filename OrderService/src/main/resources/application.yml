@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
 
 spring:
   datasource:
@@ -15,6 +15,11 @@ spring:
     name: ORDER-SERVICE
   config:
     import: configserver:http://localhost:9296
+
+    management:
+      tracing:
+        sampling:
+          probability: 1.0
 
 resilience4j:
   circuitbreaker:
@@ -36,4 +41,9 @@ resilience4j:
 #    fetch-registry: true
 #    register-with-eureka: true
 #    service-url:
-#      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
+#      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}'
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+

@@ -4,6 +4,7 @@ import com.example.orderservice.dto.OrderDtoRequest;
 import com.example.orderservice.dto.OrderDtoResponse;
 import com.example.orderservice.service.OrderService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,11 @@ public class OrderController {
 
     private OrderService orderService;
 
+    @Autowired
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
+
 
     @PostMapping
     public ResponseEntity<Long> placeOrder(@RequestBody OrderDtoRequest orderDtoRequest){
@@ -27,8 +30,9 @@ public class OrderController {
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
+
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDtoResponse> getOrderDetails(@PathVariable long orderId) {
+    public ResponseEntity<OrderDtoResponse> getOrderDetails(@PathVariable("orderId") long orderId) {
         OrderDtoResponse orderResponse
                 = orderService.getOrderDetails(orderId);
 

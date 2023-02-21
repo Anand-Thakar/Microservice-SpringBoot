@@ -1,6 +1,6 @@
 package com.example.orderservice.config;
 
-import com.example.orderservice.external.decoder.CustomErrorDecoder;
+import com.example.orderservice.external.decoder.ExceptionMessage;
 import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +10,6 @@ public class FeignConfig {
 
     @Bean
     ErrorDecoder errorDecoder (){
-        return new CustomErrorDecoder();
+        return new ExceptionMessage();
     }
 }

@@ -10,6 +10,7 @@ import com.example.orderservice.external.dto.PaymentDtoRequest;
 import com.example.orderservice.external.dto.PaymentDtoResponse;
 import com.example.orderservice.external.dto.ProductDtoResponse;
 import com.example.orderservice.repo.OrderRepository;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,14 @@ import java.time.Instant;
 
 @Service
 @Log4j2
+@NoArgsConstructor
 public class OrderServiceImpl implements OrderService{
-
-
     private OrderRepository orderRepository;
     private ProductService productService;
     private PaymentService paymentService;
     private RestTemplate restTemplate;
 
+    @Autowired
     public OrderServiceImpl(OrderRepository orderRepository, ProductService productService, PaymentService paymentService, RestTemplate restTemplate) {
         this.orderRepository = orderRepository;
         this.productService = productService;
@@ -78,18 +79,23 @@ public class OrderServiceImpl implements OrderService{
         }
 
         order.setOrderStatus(orderStatus);
+        orderRepository.save(order);
         log.info("Order Places successfully with Order Id: {}", order.getId());
         return order.getId();
     }
 
     @Override
     public OrderDtoResponse getOrderDetails(long orderId) {
+
         log.info("Get order details for Order Id : {}", orderId);
-        Order order = orderRepository.findById(orderId)
+        Order order;
+        order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException("Order not found for the order Id:" + orderId,
                         "NOT_FOUND",
                         404));
 
+
+        log.info(order);
         log.info("In order to get all details for the order," +
                 "Invoking Product service to fetch the product for id: {}", order.getBuyingProductId());
         ProductDtoResponse productDtoResponse = restTemplate.getForObject("http://PRODUCT-SERVICE/product/" + order.getBuyingProductId(),
@@ -100,6 +106,8 @@ public class OrderServiceImpl implements OrderService{
                 .builder()
                 .productName(productDtoResponse.getProductName())
                 .productId(productDtoResponse.getProductId())
+                .price(productDtoResponse.getQuantity())
+                .quantity(productDtoResponse.getQuantity())
                 .build();
 
         log.info("Getting payment information form the payment Service");
